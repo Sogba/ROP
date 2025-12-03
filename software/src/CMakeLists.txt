@@ -1,8 +1,22 @@
-add_executable(
-  ROP
-  terminalOutput.cpp
-  jobs.cpp
-  main.cpp)
+find_package(SFML 3.0 COMPONENTS Graphics Window System REQUIRED)
 
-find_package(SFML 3.0 COMPONENTS graphics window system REQUIRED)
-target_link_libraries(ROP PRIVATE sfml-graphics sfml-window sfml-system)
+add_subdirectory(sfml)
+
+add_executable(
+    ROP
+    main.cpp
+    terminalOutput.cpp
+
+)
+
+target_include_directories(ROP PUBLIC 
+  sfml
+)
+
+target_link_libraries(ROP PUBLIC
+  sfml
+  SFML::Graphics 
+  SFML::Window 
+  SFML::System 
+)
+
