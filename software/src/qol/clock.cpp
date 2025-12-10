@@ -1,5 +1,4 @@
 #include <chrono>
-#include <cstddef>
 #include <ctime>
 #include <format>
 #include <string>
@@ -15,9 +14,6 @@ namespace clk {
     short int hours;
     std::chrono::time_point<std::chrono::steady_clock> start;
   };
-
-  clk::clock *c1 = NULL;
-  clk::clock *c2 = NULL;
 
   void resetClock(clk::clock *clock){
     clock->start = std::chrono::steady_clock::now();

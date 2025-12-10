@@ -4,9 +4,13 @@ add_subdirectory(sfml)
 add_subdirectory(qol)
 
 add_executable(
-    ROP
+    ROP WIN32
     main.cpp
 )
+
+if (WIN32)
+    target_sources(ROP PRIVATE winmain.cpp)
+endif()
 
 target_include_directories(ROP PUBLIC 
   sfml
