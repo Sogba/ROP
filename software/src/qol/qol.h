@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <cstddef>
+#include <SFML/Graphics.hpp>
 
 //terminalOutput.cpp
 namespace message{
@@ -28,15 +29,17 @@ namespace clk {
 }
 
 //multithread.cpp
-void threadIncrementingClock(clk::clock *clock, bool *threadControl);
+void threadIncrementingClock(clk::clock *clock, bool *threadControl, int currentSyncMode);
+bool resolveSync(clk::clock *clock, int syncMode, clk::clock *renderClock);
 
+//random things
 int getCurrentSynchronizationMode(int argc, char* argv[]);
 
 //enums
-enum synchronizationMethod{
+enum syncMethod{
   ATOMIC,
   MUTEX,
   SEMAPHORE,
   CONDITION,
-  LOCK,
+  NO
 };

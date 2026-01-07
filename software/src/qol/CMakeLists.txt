@@ -6,3 +6,9 @@ add_library(qol STATIC
   d7.hpp
   qol.h
 )
+
+target_link_libraries(qol PUBLIC
+  SFML::Graphics 
+  SFML::Window 
+  SFML::System 
+)

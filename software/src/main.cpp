@@ -4,25 +4,26 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include "sfml/sfml.h"
-#include <iostream>
+
 
 int main(int argc, char* argv[]){
 	message::start();
 	
-	int currentSyncronizationMode = getCurrentSynchronizationMode(argc, argv);
-	std::cout << currentSyncronizationMode;
+	int currentSyncMode = getCurrentSynchronizationMode(argc, argv);
 	
 	sf::Text clock1Text = defaultText();
 
 	clk::clock clock1 = clk::zeroClockValues();
+	clk::clock renderClock;
 	sf::RenderWindow window = initialWindowSettings();
 
-	clock1.makeErrors = true;
+	if(currentSyncMode == syncMethod::NO)
+		clock1.makeErrors = true;
 
 	bool threadsShouldRun = true;
 
 	clk::setupClocks({&clock1});
-	std::thread clockIncrementation(threadIncrementingClock, &clock1, &threadsShouldRun);
+	std::thread clockIncrementation(threadIncrementingClock, &clock1, &threadsShouldRun, currentSyncMode);
 	while(window.isOpen()){
 
 		while (const std::optional event = window.pollEvent()){
@@ -32,13 +33,15 @@ int main(int argc, char* argv[]){
 				handleWindowResize(event->getIf<sf::Event::Resized>()->size, window);
 		}
 
-		clock1Text.setString(clk::clockToString(&clock1));
+		if(resolveSync(&clock1, currentSyncMode, &renderClock))
+			clock1Text.setString(clk::clockToString(&renderClock));
 		window.clear(sf::Color::Black);
 		window.draw(clock1Text);
 		window.display();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
+
 	threadsShouldRun = false;
 	clockIncrementation.join();
 

@@ -35,7 +35,7 @@ namespace clk {
   void clockIncrement(clk::clock *clock){
     if(!clocksSetted)
       return;
-    if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - clock->start) >= std::chrono::milliseconds(999)){
+    if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - clock->start) >= std::chrono::milliseconds(990)){
       clock->seconds++;
       resetClock(clock);
     }
