@@ -4,7 +4,8 @@ add_subdirectory(sfml)
 add_subdirectory(qol)
 
 add_executable(
-    ROP WIN32
+    ROP
+    WIN32
     main.cpp
 )
 

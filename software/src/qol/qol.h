@@ -29,3 +29,14 @@ namespace clk {
 
 //multithread.cpp
 void threadIncrementingClock(clk::clock *clock, bool *threadControl);
+
+int getCurrentSynchronizationMode(int argc, char* argv[]);
+
+//enums
+enum synchronizationMethod{
+  ATOMIC,
+  MUTEX,
+  SEMAPHORE,
+  CONDITION,
+  LOCK,
+};

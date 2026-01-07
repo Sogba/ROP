@@ -10,9 +10,9 @@ bool emptyZero = true;
 
 namespace clk {
     struct clock {
-    short int seconds;
-    short int minutes;
-    short int hours;
+    short int seconds = 0;
+    short int minutes = 0;
+    short int hours = 0;
     std::chrono::time_point<std::chrono::steady_clock> start;
     bool makeErrors = false;
   };

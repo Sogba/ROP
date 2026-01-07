@@ -4,9 +4,14 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include "sfml/sfml.h"
+#include <iostream>
 
-int main(){
+int main(int argc, char* argv[]){
 	message::start();
+	
+	int currentSyncronizationMode = getCurrentSynchronizationMode(argc, argv);
+	std::cout << currentSyncronizationMode;
+	
 	sf::Text clock1Text = defaultText();
 
 	clk::clock clock1 = clk::zeroClockValues();
@@ -32,6 +37,7 @@ int main(){
 		window.draw(clock1Text);
 		window.display();
 
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 	threadsShouldRun = false;
 	clockIncrementation.join();
