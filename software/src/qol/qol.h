@@ -16,6 +16,7 @@ namespace clk {
     short int minutes;
     short int hours;
     std::chrono::time_point<std::chrono::steady_clock> start;
+    bool makeErrors = false;
   };
 
 
@@ -25,3 +26,17 @@ namespace clk {
   clk::clock zeroClockValues();
   std::string clockToString(clk::clock *clock);
 }
+
+//multithread.cpp
+void threadIncrementingClock(clk::clock *clock, bool *threadControl);
+
+int getCurrentSynchronizationMode(int argc, char* argv[]);
+
+//enums
+enum synchronizationMethod{
+  ATOMIC,
+  MUTEX,
+  SEMAPHORE,
+  CONDITION,
+  LOCK,
+};

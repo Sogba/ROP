@@ -6,17 +6,19 @@
 #include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics.hpp>
+#include "../qol/d7.hpp"
 
-sf::Font font("digital7.ttf");
+sf::Font font;
 
 sf::RenderWindow initialWindowSettings(){
   sf::ContextSettings context;
   context.antiAliasingLevel = 8;
-
+  
   return sf::RenderWindow (sf::VideoMode({640, 360}), "ROP", sf::Style::Default, sf::State::Windowed, context);
 }
 
 sf::Text defaultText(){
+  font.openFromMemory(MyFont_ttf, MyFont_ttf_len);
   sf::Text text(font);
 
   text.setCharacterSize(48);

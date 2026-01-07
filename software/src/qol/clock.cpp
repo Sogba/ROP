@@ -2,6 +2,7 @@
 #include <ctime>
 #include <format>
 #include <string>
+#include <thread>
 #include <vector>
 
 bool clocksSetted = false;
@@ -9,10 +10,11 @@ bool emptyZero = true;
 
 namespace clk {
     struct clock {
-    short int seconds;
-    short int minutes;
-    short int hours;
+    short int seconds = 0;
+    short int minutes = 0;
+    short int hours = 0;
     std::chrono::time_point<std::chrono::steady_clock> start;
+    bool makeErrors = false;
   };
 
   void resetClock(clk::clock *clock){
@@ -38,6 +40,8 @@ namespace clk {
       resetClock(clock);
     }
     if(clock->seconds >= 60){
+      if(clock->makeErrors)
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
       clock->minutes++;
       clock->seconds = 0;
     }
@@ -51,7 +55,7 @@ namespace clk {
     clk::clock clock;
     clock.hours = 0;
     clock.minutes = 0;
-    clock.seconds = 0;
+    clock.seconds = 45;
     return clock;
   }
 
