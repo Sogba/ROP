@@ -9,8 +9,11 @@ std::mutex mutex;
 std::atomic<clk::clock*> atomicClock;
 std::counting_semaphore<1> semaphore(1);
 
-void atomicSync(){
+
+void atomicSync(clk::clock* clock){
   static clk::clock local;
+
+  local = *clock;
 
   clk::clockIncrement(&local);
   atomicClock.store(&local, std::memory_order_release);
@@ -36,9 +39,9 @@ void threadIncrementingClock(clk::clock *clock, bool *threadControl, int syncMod
   while(*threadControl){
 
     switch (syncMode) {
-      case syncMethod::ATOMIC: break;
+      case syncMethod::ATOMIC: atomicSync(clock); break;
       case syncMethod::CONDITION: conditionSync(clock); break;
-      case syncMethod::MUTEX: mutexSync(clock) ;
+      case syncMethod::MUTEX: mutexSync(clock); break;
       case syncMethod::SEMAPHORE: semaphoreSync(clock); break;
       case syncMethod::NO:
         clk::clockIncrement(clock);

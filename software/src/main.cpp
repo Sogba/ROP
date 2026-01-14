@@ -4,17 +4,20 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include "sfml/sfml.h"
+#include <iostream>
 
 
 int main(int argc, char* argv[]){
 	message::start();
-	
+	std::cout << "\n" << argc << "\n";
+
 	int currentSyncMode = getCurrentSynchronizationMode(argc, argv);
 	
 	sf::Text clock1Text = defaultText();
 
 
 	clk::clock clock1 = clk::nowClockValues();
+	
 	if(argc > 2)
 		clock1 = clk::zeroClockValues();
 
