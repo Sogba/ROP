@@ -20,8 +20,7 @@ sf::RenderWindow initialWindowSettings(){
 sf::Text defaultText(){
   font.openFromMemory(MyFont_ttf, MyFont_ttf_len);
   sf::Text text(font);
-
-  text.setCharacterSize(48);
+  text.setCharacterSize(100);
   text.setFillColor(sf::Color::White);
   text.setStyle(sf::Text::Regular);
 

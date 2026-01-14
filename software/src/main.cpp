@@ -13,7 +13,12 @@ int main(int argc, char* argv[]){
 	
 	sf::Text clock1Text = defaultText();
 
-	clk::clock clock1 = clk::zeroClockValues();
+
+	clk::clock clock1 = clk::nowClockValues();
+	if(argc > 2)
+		clock1 = clk::zeroClockValues();
+
+	
 	clk::clock renderClock;
 	sf::RenderWindow window = initialWindowSettings();
 
@@ -38,6 +43,10 @@ int main(int argc, char* argv[]){
 		window.clear(sf::Color::Black);
 		window.draw(clock1Text);
 		window.display();
+
+		clock1Text.setOrigin({clock1Text.getLocalBounds().size.x / 2.0f, clock1Text.getLocalBounds().size.y});
+		clock1Text.setPosition({window.getSize().x / 2.0f, window.getSize().y / 2.0f});
+		clock1Text.setCharacterSize(window.getSize().y / 5 * 2);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}

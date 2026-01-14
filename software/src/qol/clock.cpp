@@ -1,3 +1,4 @@
+#include "qol.h"
 #include <chrono>
 #include <ctime>
 #include <format>
@@ -9,14 +10,6 @@ bool clocksSetted = false;
 bool emptyZero = true;
 
 namespace clk {
-    struct clock {
-    short int seconds = 0;
-    short int minutes = 0;
-    short int hours = 0;
-    std::chrono::time_point<std::chrono::steady_clock> start;
-    bool makeErrors = false;
-  };
-
   void resetClock(clk::clock *clock){
     clock->start = std::chrono::steady_clock::now();
   }
@@ -35,7 +28,7 @@ namespace clk {
   void clockIncrement(clk::clock *clock){
     if(!clocksSetted)
       return;
-    if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - clock->start) >= std::chrono::milliseconds(990)){
+    if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - clock->start) >= std::chrono::milliseconds(999-THREAD_SLEEP)){
       clock->seconds++;
       resetClock(clock);
     }

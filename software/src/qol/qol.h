@@ -1,5 +1,7 @@
 #pragma once
 
+#define THREAD_SLEEP 50
+
 #include <chrono>
 #include <cstddef>
 #include <SFML/Graphics.hpp>
@@ -12,10 +14,10 @@ namespace message{
 
 //clock.cpp
 namespace clk {
-    struct clock {
-    short int seconds;
-    short int minutes;
-    short int hours;
+  struct clock {
+    short int seconds = 0;
+    short int minutes = 0;
+    short int hours = 0;
     std::chrono::time_point<std::chrono::steady_clock> start;
     bool makeErrors = false;
   };
