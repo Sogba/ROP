@@ -16,6 +16,7 @@ void atomicSync(clk::clock* clock){
   local = *clock;
 
   clk::clockIncrement(&local);
+  *clock = local;
   atomicClock.store(&local, std::memory_order_release);
 }
 
@@ -82,7 +83,7 @@ bool resolveSync(clk::clock *clock, int syncMode, clk::clock *renderClock){
     case syncMethod::CONDITION: conditionResolve(clock, renderClock); return true;
     case syncMethod::MUTEX: mutexResolve(clock, renderClock); return true;
     case syncMethod::SEMAPHORE: semaphoreResolve(clock, renderClock); return true;
-    case syncMethod::NO: return true;
+    case syncMethod::NO: *renderClock = *clock; return true;
   }
   return false;
 }
