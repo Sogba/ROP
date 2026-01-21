@@ -9,7 +9,6 @@ std::mutex mutex;
 std::atomic<clk::clock*> atomicClock;
 std::counting_semaphore<1> semaphore(1);
 
-
 void atomicSync(clk::clock* clock){
   static clk::clock local;
 
@@ -18,10 +17,6 @@ void atomicSync(clk::clock* clock){
   clk::clockIncrement(&local);
   *clock = local;
   atomicClock.store(&local, std::memory_order_release);
-}
-
-void conditionSync(clk::clock *clock){
-
 }
 
 void mutexSync(clk::clock *clock){
@@ -41,7 +36,6 @@ void threadIncrementingClock(clk::clock *clock, bool *threadControl, int syncMod
 
     switch (syncMode) {
       case syncMethod::ATOMIC: atomicSync(clock); break;
-      case syncMethod::CONDITION: conditionSync(clock); break;
       case syncMethod::MUTEX: mutexSync(clock); break;
       case syncMethod::SEMAPHORE: semaphoreSync(clock); break;
       case syncMethod::NO:
@@ -55,10 +49,6 @@ void threadIncrementingClock(clk::clock *clock, bool *threadControl, int syncMod
 
 void atomicResolve(clk::clock *renderClock){
   *renderClock = *atomicClock.load(std::memory_order_acquire);
-}
-
-void conditionResolve(clk::clock *clock, clk::clock *renderClock){
-
 }
 
 void mutexResolve(clk::clock *clock, clk::clock *renderClock){
@@ -80,7 +70,6 @@ void semaphoreResolve(clk::clock *clock, clk::clock *renderClock){
 bool resolveSync(clk::clock *clock, int syncMode, clk::clock *renderClock){
   switch (syncMode) {
     case syncMethod::ATOMIC: atomicResolve(renderClock); return true;
-    case syncMethod::CONDITION: conditionResolve(clock, renderClock); return true;
     case syncMethod::MUTEX: mutexResolve(clock, renderClock); return true;
     case syncMethod::SEMAPHORE: semaphoreResolve(clock, renderClock); return true;
     case syncMethod::NO: *renderClock = *clock; return true;

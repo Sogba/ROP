@@ -42,6 +42,5 @@ enum syncMethod{
   ATOMIC,
   MUTEX,
   SEMAPHORE,
-  CONDITION,
   NO
 };

@@ -10,7 +10,6 @@ int getCurrentSynchronizationMode(int argc, char* argv[]) {
     switch (c) {
         case 'm': return syncMethod::MUTEX;
         case 's': return syncMethod::SEMAPHORE;
-        case 'c': return syncMethod::CONDITION;
         case 'a': return syncMethod::ATOMIC;
         case 'n': return syncMethod::NO;
         default:  return syncMethod::ATOMIC;
