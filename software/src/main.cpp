@@ -7,7 +7,8 @@
 #include <thread>
 #include "sfml/sfml.h"
 #include <iostream>
-
+#include <imgui-SFML.h>
+#include <imgui.h>
 
 int main(int argc, char* argv[]){
 	message::start();
@@ -51,9 +52,19 @@ int main(int argc, char* argv[]){
 
 	syncModeText.setString(currentSyncModeString);
 
+bool showImGui = false;
+
+window.setFramerateLimit(144);
+
+if (!ImGui::SFML::Init(window))
+        return -1;
+
+sf::Clock clock;
+
 	while(window.isOpen()){
 
 		while (const std::optional event = window.pollEvent()){
+			ImGui::SFML::ProcessEvent(window, *event);
 			if (event->is<sf::Event::Closed>())
 				window.close();
 			else if (event->is<sf::Event::Resized>())
@@ -67,13 +78,6 @@ int main(int argc, char* argv[]){
 			clock2Text.setString(clk::clockToString(&renderClock));
 
 		speedText.setString(std::format("{:.2f}", speedQ) + "X");
-
-		window.clear(sf::Color::Black);
-		window.draw(clock1Text);
-		window.draw(clock2Text); 
-		window.draw(syncModeText);
-		window.draw(speedText);
-		window.display();
 
 		clock1Text.setOrigin({clock1Text.getLocalBounds().size.x / 2.0f, clock1Text.getLocalBounds().size.y});
 		clock1Text.setPosition({window.getSize().x / 2.0f, window.getSize().y / 4.0f});
@@ -91,9 +95,25 @@ int main(int argc, char* argv[]){
 		speedText.setPosition({(clock1Text.getPosition().x*1.0f + 0.5f*clock1Text.getLocalBounds().size.x - 0.5f*speedText.getLocalBounds().size.x), window.getSize().y / 4.0f * 2});
 		speedText.setCharacterSize(window.getSize().y / 5);
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-	}
+	ImGui::SFML::Update(window, clock.restart());
 
+		ImGui::Begin("Hello, world!");
+        ImGui::Button("Look at this pretty button");
+        ImGui::End();
+
+
+		window.clear(sf::Color::Black);
+		if(showImGui)
+			ImGui::SFML::Render(window);		
+		window.draw(clock1Text);
+		window.draw(clock2Text); 
+		window.draw(syncModeText);
+		window.draw(speedText);
+		window.display();
+
+		//std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
+	ImGui::SFML::Shutdown();
 	threadsShouldRun = false;
 	clockIncrementation1.join();
 	clockIncrementation2.join();

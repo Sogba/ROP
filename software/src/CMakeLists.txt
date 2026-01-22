@@ -24,5 +24,5 @@ target_link_libraries(ROP PUBLIC
   SFML::Graphics 
   SFML::Window 
   SFML::System 
+  ImGui-SFML::ImGui-SFML
 )
-
