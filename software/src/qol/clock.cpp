@@ -9,6 +9,7 @@
 bool clocksSetted = false;
 bool emptyZero = true;
 
+
 namespace clk {
   void resetClock(clk::clock *clock){
     clock->start = std::chrono::steady_clock::now();
@@ -28,16 +29,24 @@ namespace clk {
   void clockIncrement(clk::clock *clock){
     if(!clocksSetted)
       return;
-    if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - clock->start) >= std::chrono::milliseconds(999-THREAD_SLEEP)){
-      clock->seconds++;
-      resetClock(clock);
+
+    auto now = std::chrono::steady_clock::now();
+
+    if (now - clock->start >= std::chrono::seconds(1)) {
+
+        clock->seconds++;
+
+        
+        clock->start += std::chrono::seconds(1);
     }
+
     if(clock->seconds >= 60){
       if(clock->makeErrors)
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
       clock->minutes++;
       clock->seconds = 0;
     }
+
     if(clock->minutes >= 60){
       clock->hours++;
       clock->minutes = 0;
