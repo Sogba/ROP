@@ -33,10 +33,7 @@ namespace clk {
     auto now = std::chrono::steady_clock::now();
 
     if (now - clock->start >= std::chrono::seconds(1)) {
-
         clock->seconds++;
-
-        
         clock->start += std::chrono::seconds(1);
     }
 

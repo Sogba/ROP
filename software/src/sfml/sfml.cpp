@@ -6,14 +6,15 @@
 #include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 #include "../qol/d7.hpp"
 
 sf::Font font;
 
 sf::RenderWindow initialWindowSettings(){
   sf::ContextSettings context;
+
   context.antiAliasingLevel = 8;
-  
   return sf::RenderWindow (sf::VideoMode({640, 360}), "ROP", sf::Style::Default, sf::State::Windowed, context);
 }
 
