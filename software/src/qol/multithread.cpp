@@ -43,7 +43,7 @@ void threadIncrementingClock(clk::clock *clock, bool *threadControl, int syncMod
         break;
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(THREAD_SLEEP));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
 }
 

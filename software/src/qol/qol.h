@@ -1,9 +1,6 @@
 #pragma once
 
-#define THREAD_SLEEP 50
-
 #include <chrono>
-#include <cstddef>
 #include <SFML/Graphics.hpp>
 
 //terminalOutput.cpp
@@ -23,7 +20,7 @@ namespace clk {
   };
 
 
-  bool setupClocks(std::vector<clk::clock *> clocks);
+  bool setupClocks(std::vector<clk::clock *> clocks, float speedQ);
   void clockIncrement(clk::clock *clock);
   clk::clock nowClockValues();
   clk::clock zeroClockValues();

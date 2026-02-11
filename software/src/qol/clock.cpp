@@ -10,14 +10,21 @@ bool clocksSetted = false;
 bool emptyZero = true;
 
 
+namespace{
+  int errorMiliseconds = 300;
+  float speedQ;
+}
+
 namespace clk {
   void resetClock(clk::clock *clock){
     clock->start = std::chrono::steady_clock::now();
   }
 
-  bool setupClocks(std::vector<clk::clock *> clocks){
+  bool setupClocks(std::vector<clk::clock *> clocks, float speedQInput){
     if(clocksSetted)
       return false;
+
+    speedQ = speedQInput;
 
     for(auto clock : clocks)
       resetClock(clock);
@@ -32,21 +39,29 @@ namespace clk {
 
     auto now = std::chrono::steady_clock::now();
 
-    if (now - clock->start >= std::chrono::seconds(1)) {
+    if (now - clock->start >= std::chrono::milliseconds(static_cast<int>(1000/speedQ))) {
         clock->seconds++;
-        clock->start += std::chrono::seconds(1);
+        clock->start += std::chrono::milliseconds(static_cast<int>(1000/speedQ));
     }
 
     if(clock->seconds >= 60){
       if(clock->makeErrors)
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(errorMiliseconds/speedQ)));
       clock->minutes++;
       clock->seconds = 0;
     }
 
     if(clock->minutes >= 60){
+      if(clock->makeErrors)
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(errorMiliseconds/speedQ)));
       clock->hours++;
       clock->minutes = 0;
+    }
+
+    if(clock->hours >= 24){
+      if(clock->makeErrors)
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(errorMiliseconds/speedQ)));
+      clock->hours = 0;
     }
   }
 
@@ -70,12 +85,5 @@ namespace clk {
     clock.seconds = mytm.tm_sec;
     
     return clock;
-  }
-
-  std::string clockToString(clk::clock *clock){
-    if(emptyZero)
-      return std::format("{:02}:{:02}:{:02}", clock->hours, clock->minutes, clock->seconds);
-
-    return std::format("{}:{}:{}", clock->hours, clock->minutes, clock->seconds);
   }
 }

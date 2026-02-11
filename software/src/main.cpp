@@ -4,17 +4,26 @@
 #include <string>
 #include <thread>
 #include "sfml/sfml.h"
+#include <iostream>
+
 
 int main(int argc, char* argv[]){
 	message::start();
+
+	sf::RenderWindow window = initialWindowSettings();
+	window.setFramerateLimit(144);
+
+	bool showImGui = false;
 
 	int currentSyncMode = getCurrentSynchronizationMode(argc, argv);
 	
 	clk::clock clock1 = clk::nowClockValues();
 	clk::clock clock2 = clk::nowClockValues();
-	clk::clock renderClock;
+	clk::clock renderClock = clk::zeroClockValues();
 
-	clk::setupClocks({&clock1, &clock2});
+	float speedQ = 4;
+
+	clk::setupClocks({&clock1, &clock2}, speedQ);
 	clock1.makeErrors = true;
 	if(argc > 2){
 		clock1 = clk::zeroClockValues();
@@ -22,9 +31,7 @@ int main(int argc, char* argv[]){
 	}	
 
 	bool threadsShouldRun = true;
-	bool showImGui = false;
-
-	float speedQ = 1;
+	
 
 	static std::string currentSyncModeString;
 
@@ -35,7 +42,8 @@ int main(int argc, char* argv[]){
 		case syncMethod::NO : currentSyncModeString = "NO SYNC"; break;
 	}
 
-	sf::Window window = initialWindowSettings();
+	clockText clockText1(&window, &renderClock, 0);
+	clockText clockText2(&window, &renderClock, 2);
 
 	std::thread clockIncrementation1(threadIncrementingClock, &clock1, &threadsShouldRun, syncMethod::NO);
 	std::thread clockIncrementation2(threadIncrementingClock, &clock2, &threadsShouldRun, currentSyncMode);
@@ -45,16 +53,22 @@ int main(int argc, char* argv[]){
 		while (const std::optional event = window.pollEvent()){
 			if (event->is<sf::Event::Closed>())
 				window.close();
-			else if (event->is<sf::Event::Resized>());
-				//handleWindowResize(event->getIf<sf::Event::Resized>()->size, window);
-				//Do something after the window is resized
+			else if (event->is<sf::Event::Resized>())
+				handleWindowResize(event->getIf<sf::Event::Resized>()->size, &window, &clockText1, &clockText2);
+			
 		}
 
-		if(resolveSync(&clock1, syncMethod::NO, &renderClock));
-			//Set text of clock1 after logic resolve
+		if(resolveSync(&clock1, syncMethod::NO, &renderClock))
+			clockText1.updateText();
 
-		if(resolveSync(&clock2, currentSyncMode, &renderClock));
-			//Set text of clock2 after logic resolve
+		if(resolveSync(&clock2, currentSyncMode, &renderClock))
+			clockText2.updateText();
+	
+
+		window.clear(sf::Color::Black);
+		clockText1.draw();
+		clockText2.draw();
+		window.display();
 	}
 
 	threadsShouldRun = false;
