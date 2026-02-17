@@ -42,8 +42,8 @@ int main(int argc, char* argv[]){
 		case syncMethod::NO : currentSyncModeString = "NO SYNC"; break;
 	}
 
-	clockText clockText1(&window, &renderClock, 0);
-	clockText clockText2(&window, &renderClock, 2);
+	clockText clockText1(&window, &renderClock, 1);
+	clockText clockText2(&window, &renderClock, 3);
 
 	std::thread clockIncrementation1(threadIncrementingClock, &clock1, &threadsShouldRun, syncMethod::NO);
 	std::thread clockIncrementation2(threadIncrementingClock, &clock2, &threadsShouldRun, currentSyncMode);
