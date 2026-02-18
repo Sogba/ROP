@@ -5,22 +5,31 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Window.hpp>
 #include <cmath>
-#include <ostream>
+#include <format>
+#include <string>
 #include "../qol/d7.hpp"
 #include "sfml.h"
-#include <iostream>
-
 
 namespace{
   sf::Font font;
 
-  void correctWindowSize(sf::RenderWindow* window, clockText someClockText){
-    sf::Vector2u windowNewSize = window->getSize();
+  sf::RenderWindow *window;
+  clockText *clockText1;
+  clockText *clockText2;
+  sf::Text *modeText;
+  sf::Text *speedText;
+  float *speedQ;
 
-    window->setSize(windowNewSize);
-  }
 }
 
+void sfmlInit(sf::RenderWindow *inputWindow, clockText *inputClockText1, clockText *inputClockText2, sf::Text *inputModeText, sf::Text *inputSpeedText, float *inputSpeedQ){
+  window = inputWindow;
+  clockText1 = inputClockText1;
+  clockText2 = inputClockText2;
+  modeText = inputModeText;
+  speedText = inputSpeedText;
+  speedQ = inputSpeedQ;
+}
 
 sf::RenderWindow initialWindowSettings(){
   sf::ContextSettings context;
@@ -39,7 +48,7 @@ sf::Text defaultText(){
   return text;
 }
 
-void handleWindowResize(sf::Vector2u size, sf::RenderWindow* window, clockText* clockText1, clockText* clockText2){
+void handleWindowResize(sf::Vector2u size){
   sf::View view = window->getDefaultView();
   view.setSize(static_cast<sf::Vector2f>(size));
   view.setCenter({
@@ -47,11 +56,40 @@ void handleWindowResize(sf::Vector2u size, sf::RenderWindow* window, clockText* 
     view.getSize().y/2
   });
   window->setView(view);
-  
   clockText1->resize();
   clockText2->resize();
 
-  //correctWindowSize(window, clockText1->divider1);
+  modeText->setCharacterSize(std::round(window->getSize().y / 3.f * 0.5f));
+  speedText->setCharacterSize(std::round(window->getSize().y / 3.f * 0.5f));
+
+  
+  auto leftCenterOrigin = [](sf::Text& text)
+  {
+      auto b = text.getLocalBounds();
+      text.setOrigin({
+          b.position.x,
+          b.position.y + b.size.y * 0.5f
+      });
+  };
+
+  auto rightCenterOrigin = [](sf::Text& text)
+  {
+      auto b = text.getLocalBounds();
+      text.setOrigin({
+          b.position.x + b.size.x,
+          b.position.y + b.size.y * 0.5f
+    });
+  };
+
+  float y = window->getSize().y / 2.f;
+
+  leftCenterOrigin(*modeText);
+  rightCenterOrigin(*speedText);
+
+  auto [startX, endX] = clockText1->horizontalBounds();
+
+  modeText->setPosition({ startX, y });
+  speedText->setPosition({ endX, y });
 }
 
 clockText::clockText(sf::RenderWindow* window, clk::clock* clock, short positionIndex){
@@ -160,4 +198,33 @@ void clockText::updateText(){
   }
 }
 
+float clockText::totalWidth(){
+  float output =
+      hours.getLocalBounds().size.x +
+      divider1.getLocalBounds().size.x +
+      minutes.getLocalBounds().size.x +
+      divider2.getLocalBounds().size.x +
+      seconds.getLocalBounds().size.x +
+      window->getSize().y / 3.f * 0.1f * 4.f;
 
+      return output;
+}
+
+std::pair<float, float> clockText::horizontalBounds(){
+float total =
+        hours.getLocalBounds().size.x +
+        divider1.getLocalBounds().size.x +
+        minutes.getLocalBounds().size.x +
+        divider2.getLocalBounds().size.x +
+        seconds.getLocalBounds().size.x +
+        window->getSize().y / 3.f * 0.1f * 4.f;
+
+    float start = window->getSize().x / 2.f - total / 2.f;
+    float end = start + total;
+
+    return { start, end };
+}
+
+void setSpeedText(){
+  speedText->setString(std::format("{:.1f}", *speedQ));
+}

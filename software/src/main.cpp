@@ -1,11 +1,10 @@
 #include "qol/qol.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/Window/Window.hpp>
 #include <string>
 #include <thread>
 #include "sfml/sfml.h"
-#include <iostream>
-
 
 int main(int argc, char* argv[]){
 	message::start();
@@ -45,16 +44,24 @@ int main(int argc, char* argv[]){
 	clockText clockText1(&window, &renderClock, 1);
 	clockText clockText2(&window, &renderClock, 3);
 
+	sf::Text modeText = defaultText();
+	modeText.setString(currentSyncModeString);
+	sf::Text speedText = defaultText();
+	
+	sfmlInit(&window, &clockText1, &clockText2, &modeText, &speedText, &speedQ);
+
 	std::thread clockIncrementation1(threadIncrementingClock, &clock1, &threadsShouldRun, syncMethod::NO);
 	std::thread clockIncrementation2(threadIncrementingClock, &clock2, &threadsShouldRun, currentSyncMode);
 
+	setSpeedText();
+	handleWindowResize({640, 360});
 	while(window.isOpen()){
 
 		while (const std::optional event = window.pollEvent()){
 			if (event->is<sf::Event::Closed>())
 				window.close();
 			else if (event->is<sf::Event::Resized>())
-				handleWindowResize(event->getIf<sf::Event::Resized>()->size, &window, &clockText1, &clockText2);
+				handleWindowResize(event->getIf<sf::Event::Resized>()->size);
 			
 		}
 
@@ -68,6 +75,8 @@ int main(int argc, char* argv[]){
 		window.clear(sf::Color::Black);
 		clockText1.draw();
 		clockText2.draw();
+		window.draw(modeText);
+		window.draw(speedText);
 		window.display();
 	}
 

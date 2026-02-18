@@ -2,8 +2,10 @@
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics.hpp>
+#include <utility>
 #include "../qol/qol.h"
 sf::Text defaultText();
+
 
 
 class clockText {
@@ -28,8 +30,11 @@ public:
   void resize();
   void draw();
   void updateText();
+  float totalWidth();
+  std::pair<float, float> horizontalBounds();
 };
 
 sf::RenderWindow initialWindowSettings();
-void handleWindowResize(sf::Vector2u size, sf::RenderWindow* window, clockText* clockText1, clockText* clockText2);
-
+void handleWindowResize(sf::Vector2u size);
+void sfmlInit(sf::RenderWindow *inputWindow, clockText *inputClockText1, clockText *inputClockText2, sf::Text *inputModeText, sf::Text *inputSpeedText, float *inputSpeedQ);
+void setSpeedText();
