@@ -226,5 +226,5 @@ float total =
 }
 
 void setSpeedText(){
-  speedText->setString(std::format("{:.1f}", *speedQ));
+  speedText->setString(std::format("{:3.1f}", *speedQ));
 }
