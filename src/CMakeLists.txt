@@ -1,7 +1,7 @@
 find_package(SFML 3.0 COMPONENTS Graphics Window System REQUIRED)
 
 add_subdirectory(sfml)
-add_subdirectory(qol)
+add_subdirectory(core)
 
 add_executable(
     ROP
@@ -15,12 +15,12 @@ endif()
 
 target_include_directories(ROP PUBLIC 
   sfml
-  qol
+  core
 )
 
 target_link_libraries(ROP PUBLIC
   sfml
-  qol
+  core
   SFML::Graphics 
   SFML::Window 
   SFML::System 

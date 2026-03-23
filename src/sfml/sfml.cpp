@@ -7,7 +7,7 @@
 #include <cmath>
 #include <format>
 #include <string>
-#include "../qol/d7.hpp"
+#include "../core/d7.hpp"
 #include "sfml.h"
 
 namespace{
@@ -39,7 +39,8 @@ sf::RenderWindow initialWindowSettings(){
 }
 
 sf::Text defaultText(){
-  font.openFromMemory(MyFont_ttf, MyFont_ttf_len);
+  if(font.getInfo().family.empty())
+    font.openFromMemory(MyFont_ttf, MyFont_ttf_len);
   sf::Text text(font);
   text.setCharacterSize(100);
   text.setFillColor(sf::Color::White);
@@ -62,7 +63,6 @@ void handleWindowResize(sf::Vector2u size){
   modeText->setCharacterSize(std::round(window->getSize().y / 3.f * 0.5f));
   speedText->setCharacterSize(std::round(window->getSize().y / 3.f * 0.5f));
 
-  
   auto leftCenterOrigin = [](sf::Text& text)
   {
       auto b = text.getLocalBounds();
@@ -117,6 +117,11 @@ void clockText::resize()
     divider2.setCharacterSize(std::round(characterSize));
     seconds.setCharacterSize(std::round(characterSize));
 
+    // Use a stable reference string so layout doesn't shift when digits change width
+    hours.setString("00");
+    minutes.setString("00");
+    seconds.setString("00");
+
     auto centerOrigin = [](sf::Text& text)
     {
         auto b = text.getLocalBounds();
@@ -133,33 +138,25 @@ void clockText::resize()
     centerOrigin(seconds);
 
     float y = window->getSize().y / 6.f * (positionIndex * 2 - 1);
+    float spacing = characterSize * 0.1f;
+    float startX = window->getSize().x / 2.f - computeTotalWidth() / 2.f;
+    float x = startX;
 
-  float spacing = characterSize * 0.1f;
+    hours.setPosition({x + hours.getLocalBounds().size.x / 2.f, y});
+    x += hours.getLocalBounds().size.x + spacing;
 
-  float totalWidth =
-      hours.getLocalBounds().size.x +
-      divider1.getLocalBounds().size.x +
-      minutes.getLocalBounds().size.x +
-      divider2.getLocalBounds().size.x +
-      seconds.getLocalBounds().size.x +
-      spacing * 4.f;   // 4 gaps between 5 elements
+    divider1.setPosition({x + divider1.getLocalBounds().size.x / 2.f, y});
+    x += divider1.getLocalBounds().size.x + spacing;
 
-  float startX = window->getSize().x / 2.f - totalWidth / 2.f;
-  float x = startX;
+    minutes.setPosition({x + minutes.getLocalBounds().size.x / 2.f, y});
+    x += minutes.getLocalBounds().size.x + spacing;
 
-  hours.setPosition({x + hours.getLocalBounds().size.x / 2.f, y});
-  x += hours.getLocalBounds().size.x + spacing;
+    divider2.setPosition({x + divider2.getLocalBounds().size.x / 2.f, y});
+    x += divider2.getLocalBounds().size.x + spacing;
 
-  divider1.setPosition({x + divider1.getLocalBounds().size.x / 2.f, y});
-  x += divider1.getLocalBounds().size.x + spacing;
+    seconds.setPosition({x + seconds.getLocalBounds().size.x / 2.f, y});
 
-  minutes.setPosition({x + minutes.getLocalBounds().size.x / 2.f, y});
-  x += minutes.getLocalBounds().size.x + spacing;
-
-  divider2.setPosition({x + divider2.getLocalBounds().size.x / 2.f, y});
-  x += divider2.getLocalBounds().size.x + spacing;
-
-  seconds.setPosition({x + seconds.getLocalBounds().size.x / 2.f, y});
+    updateText();
 }
 
 void clockText::draw(){
@@ -198,31 +195,24 @@ void clockText::updateText(){
   }
 }
 
-float clockText::totalWidth(){
-  float output =
-      hours.getLocalBounds().size.x +
-      divider1.getLocalBounds().size.x +
-      minutes.getLocalBounds().size.x +
-      divider2.getLocalBounds().size.x +
-      seconds.getLocalBounds().size.x +
-      window->getSize().y / 3.f * 0.1f * 4.f;
+float clockText::computeTotalWidth() const {
+  float spacing = window->getSize().y / 3.f * 0.1f;
+  return hours.getLocalBounds().size.x +
+         divider1.getLocalBounds().size.x +
+         minutes.getLocalBounds().size.x +
+         divider2.getLocalBounds().size.x +
+         seconds.getLocalBounds().size.x +
+         spacing * 4.f;
+}
 
-      return output;
+float clockText::totalWidth(){
+  return computeTotalWidth();
 }
 
 std::pair<float, float> clockText::horizontalBounds(){
-float total =
-        hours.getLocalBounds().size.x +
-        divider1.getLocalBounds().size.x +
-        minutes.getLocalBounds().size.x +
-        divider2.getLocalBounds().size.x +
-        seconds.getLocalBounds().size.x +
-        window->getSize().y / 3.f * 0.1f * 4.f;
-
-    float start = window->getSize().x / 2.f - total / 2.f;
-    float end = start + total;
-
-    return { start, end };
+  float total = computeTotalWidth();
+  float start = window->getSize().x / 2.f - total / 2.f;
+  return { start, start + total };
 }
 
 void setSpeedText(){

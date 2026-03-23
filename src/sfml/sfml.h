@@ -3,7 +3,7 @@
 #include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics.hpp>
 #include <utility>
-#include "../qol/qol.h"
+#include "../core/core.h"
 sf::Text defaultText();
 
 
@@ -11,19 +11,20 @@ sf::Text defaultText();
 class clockText {
 private:
   short positionIndex;
-
   short error;
 
   sf::Text hours = defaultText();
   sf::Text minutes = defaultText();
   sf::Text seconds = defaultText();
+  sf::Text divider1 = defaultText();
+  sf::Text divider2 = defaultText();
 
   sf::RenderWindow* window;
   clk::clock* clock;
 
+  float computeTotalWidth() const;
+
 public:
-  sf::Text divider1 = defaultText();
-  sf::Text divider2 = defaultText();
 
   clockText(sf::RenderWindow* window, clk::clock* clock, short positionIndex);
 

@@ -1,4 +1,4 @@
-#include "qol.h"
+#include "core.h"
 
 int getCurrentSynchronizationMode(int argc, char* argv[]) {
 

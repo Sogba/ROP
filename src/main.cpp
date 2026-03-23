@@ -1,4 +1,4 @@
-#include "qol/qol.h"
+#include "core/core.h"
 #include "sfml/sfml.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -12,7 +12,7 @@
 void restartClocks(clk::clock &clock1, clk::clock &clock2, float speed,
                    int syncMode, bool &threadsShouldRun, std::thread &t1,
                    std::thread &t2) {
-  // Stop old threads
+
   threadsShouldRun = false;
 
   if (t1.joinable())
@@ -20,16 +20,17 @@ void restartClocks(clk::clock &clock1, clk::clock &clock2, float speed,
   if (t2.joinable())
     t2.join();
 
-  // Reset clocks to NOW
+
   clock1 = clk::nowClockValues();
   clock2 = clk::nowClockValues();
+  clock1.makeErrors = true;
 
-  // Apply new speed
+
   clk::setupClocks({&clock1, &clock2}, speed);
 
   threadsShouldRun = true;
 
-  // Restart threads with new sync mode
+
   t1 = std::thread(threadIncrementingClock, &clock1, &threadsShouldRun,
                    syncMethod::NO);
 
@@ -49,20 +50,16 @@ int main(int argc, char *argv[]) {
 
   clk::clock clock1 = clk::nowClockValues();
   clk::clock clock2 = clk::nowClockValues();
-  clk::clock renderClock = clk::zeroClockValues();
+  clk::clock renderClock = clk::nowClockValues();
 
   float speedQ = 4;
 
   clk::setupClocks({&clock1, &clock2}, speedQ);
   clock1.makeErrors = true;
-  if (argc > 2) {
-    clock1 = clk::zeroClockValues();
-    clock2 = clk::zeroClockValues();
-  }
 
   bool threadsShouldRun = true;
 
-  static std::string currentSyncModeString;
+  std::string currentSyncModeString;
 
   switch (currentSyncMode) {
   case syncMethod::ATOMIC:

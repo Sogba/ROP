@@ -23,8 +23,6 @@ namespace clk {
   bool setupClocks(std::vector<clk::clock *> clocks, float speedQ);
   void clockIncrement(clk::clock *clock);
   clk::clock nowClockValues();
-  clk::clock zeroClockValues();
-  std::string clockToString(clk::clock *clock);
 }
 
 //multithread.cpp

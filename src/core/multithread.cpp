@@ -1,4 +1,4 @@
-#include "qol.h"
+#include "core.h"
 #include <atomic>
 #include <chrono>
 #include <semaphore>

@@ -1,13 +1,13 @@
-add_library(qol STATIC
+add_library(core STATIC
   clock.cpp
   terminalOutput.cpp
   multithread.cpp
-  idkwheretoputitsoitshere.cpp
+  args.cpp
   d7.hpp
-  qol.h
+  core.h
 )
 
-target_link_libraries(qol PUBLIC
+target_link_libraries(core PUBLIC
   SFML::Graphics 
   SFML::Window 
   SFML::System 

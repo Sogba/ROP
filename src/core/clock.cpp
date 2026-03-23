@@ -1,4 +1,4 @@
-#include "qol.h"
+#include "core.h"
 #include <chrono>
 #include <ctime>
 #include <format>
@@ -6,8 +6,7 @@
 #include <thread>
 #include <vector>
 
-bool clocksSetted = false;
-bool emptyZero = true;
+bool clocksSet = false;
 
 
 namespace{
@@ -26,12 +25,12 @@ namespace clk {
     for(auto clock : clocks)
       resetClock(clock);
     
-    clocksSetted = true;
+    clocksSet = true;
     return true;
   }
 
   void clockIncrement(clk::clock *clock){
-    if(!clocksSetted)
+    if(!clocksSet)
       return;
 
     auto now = std::chrono::steady_clock::now();
