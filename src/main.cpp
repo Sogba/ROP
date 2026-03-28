@@ -36,6 +36,7 @@ void restartClocks(clk::clock &clock1, clk::clock &clock2, float speed,
 
   t2 = std::thread(threadIncrementingClock, &clock2, &threadsShouldRun,
                    syncMode);
+
 }
 
 int main(int argc, char *argv[]) {
@@ -200,12 +201,19 @@ if (showImGui)
         );
 
         setSpeedText();
-        modeText.setString(
-            currentSyncMode == syncMethod::NO        ? "NO SYNC" :
-            currentSyncMode == syncMethod::ATOMIC    ? "ATOMIC" :
-            currentSyncMode == syncMethod::MUTEX     ? "MUTEX" :
-                                                       "SEMAPHORE"
-        );
+        switch (currentSyncMode) {
+        case syncMethod::ATOMIC:
+          currentSyncModeString = "ATOMIC";
+          break;
+        case syncMethod::MUTEX:
+          currentSyncModeString = "MUTEX";
+          break;
+        case syncMethod::SEMAPHORE:
+          currentSyncModeString = "SEMAPHORE";
+          break;
+        }
+        modeText.setString(currentSyncModeString);
+        handleWindowResize(window.getSize());
     }
 
     ImGui::PopItemWidth();
